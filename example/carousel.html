@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ci3 Carousel Example</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <!-- Require Ci3 Carousel Javascript file -->
+  <script src="../ci3-carousel.js"></script>
+  <link rel="stylesheet" type="text/css" href="carousel.css">
+
+  <style type="text/css">
+    body {
+      background-color: #ddd;
+    }
+
+    img {
+      height: 450px;
+      width: 700px;
+      border: #FFF solid 10px;
+    }
+  </style>
+<body>
+  <div class="carousel" id="caro1">
+    <!-- Need to add class 'item' for every slide-->
+    <div class="item">
+      <img src="pic1.jpg">
+    </div>
+    <div class="item">
+      <img src="pic2.jpg">
+    </div>
+    <div class="item">
+      <img src="pic3.jpg">
+    </div>
+    <div class="item">
+      <img src="pic4.jpg">
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      // $('#caro').ci3(); //to use default setting
+      $('#caro1').ci3({
+        duration: 3, //seconds
+        auto: true
+      });
+    });
+  </script>
+</body>
+</html>
