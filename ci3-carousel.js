@@ -8,6 +8,8 @@
 (function ($) {
   "use strict";
 
+  var timer;
+
   function replaceClass(element, oldClass, newClass) {
     element.removeClass(oldClass);
     element.addClass(newClass);
@@ -36,50 +38,57 @@
     }
   }
 
-  function addClickEvent(carousel, elementName) {
+  function addClickEvent(carousel, elementName, settings) {
     var element = carousel.find('.' + elementName);
     element.click(function() {
       clearRotatingFunc(carousel.find('.next'), 'next');
       clearRotatingFunc(carousel.find('.prev'), 'prev');
       carousel.find('.active').removeClass('active');
 
-      replaceClass(element, elementName, "active");
-      prevItem(element).addClass('prev');
-      nextItem(element).addClass('next');
+      setClasses($(this));
+      clearInterval(timer);
+      setAutoRotate(carousel, settings);
       
-      bindRotateEvent(carousel);    
+      bindRotateEvent(carousel, settings);    
     });
   }
 
-  function bindRotateEvent(carousel) {
-    addClickEvent(carousel, 'prev');
-    addClickEvent(carousel, 'next');
+  function bindRotateEvent(carousel, settings) {
+    addClickEvent(carousel, 'prev', settings);
+    addClickEvent(carousel, 'next', settings);
+  }
+
+  function setClasses(element) {
+    element.addClass('active');
+    prevItem(element).addClass('prev');
+    nextItem(element).addClass('next');    
   }
 
   function bind(carousel, settings) {
-    var firstItem = carousel.find('.item:first');
-
-    firstItem.addClass('active');
-    prevItem(firstItem).addClass('prev');
-    nextItem(firstItem).addClass('next');
+    setClasses(carousel.find('.item:first'));
     
-    bindRotateEvent(carousel);
+    bindRotateEvent(carousel, settings);
+    setAutoRotate(carousel, settings);
+  }
 
-    setInterval(function () {
-      carousel.find('.next').click();
-    }, (settings.duration * 1000));
-
+  function setAutoRotate(carousel, settings) {
+    if (settings.auto) {
+      timer = setInterval(function () {
+                            carousel.find('.next').click();
+                          }, (settings.duration * 1000));
+    }
   }
 
   $.fn.ci3 = function(options) {
-    var settings = $.extend($.fn.ci3.defaults, options);
+    var settings = $.extend( {}, $.fn.ci3.defaults, options );
     return this.each(function() {
       bind($(this), settings);
     });
   };
 
   $.fn.ci3.defaults = {
-    duration: 5
+    duration: 4,
+    auto: true
   };
   
 }(jQuery));

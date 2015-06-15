@@ -9,15 +9,29 @@
               + '<div class="item" id="item4"></div>'
             + '</div>';
 
-    it('has a default duration', function() {
-      expect($.fn.ci3.defaults.duration).toEqual(5);
-    });
+    describe('initialize', function() {
+      beforeEach(function () {
+        $('.carousel').ci3();
+      });
 
-    it('is chainable', function() {
-      expect($('.carousel').ci3().hasClass('carousel')).toBe(true);
+      it('has a default duration', function() {
+        expect($.fn.ci3.defaults.duration).toEqual(4);
+      });
+
+      it('default auto is true', function() {
+        expect($.fn.ci3.defaults.auto).toBe(true);
+      });
+
+      it('is chainable', function() {
+        expect($('.carousel').ci3().hasClass('carousel')).toBe(true);
+      });
     });
 
     describe('initialize', function() {
+      beforeEach(function () {
+        $('.carousel').ci3();
+      });
+
       it('sets the active', function() {
         expect($('#item1').hasClass('active')).toBe(true);
       });
@@ -33,6 +47,7 @@
 
     describe('on next item click', function() {
       beforeEach(function () {
+        $('.carousel').ci3();
         $('.next').click();
       });
 
@@ -51,6 +66,7 @@
 
     describe('on previous item click', function() {
       beforeEach(function () {
+        $('.carousel').ci3();
         $('.prev').click();
       });
 
@@ -69,6 +85,7 @@
 
     describe('on next item click when active item is the last item', function() {
       beforeEach(function () {
+        $('.carousel').ci3();
         $('.prev').click(); //make last item active item
         $('.next').click();
       });
@@ -87,23 +104,54 @@
     });
 
     describe('autorotate', function() {
+      var DEFAULT_DURATION = $.fn.ci3.defaults.duration * 1000;
+
       it('does not go to the next item time is less than the duration', function() {
-        jasmine.clock().tick(4000);
+        $('.carousel').ci3();
+        jasmine.clock().tick(DEFAULT_DURATION - 100);
         expect($('#item1').hasClass('active')).toBe(true);
       });
 
       it('goes to the next item after default time', function() {
-        jasmine.clock().tick(5000);
+        $('.carousel').ci3();
+        jasmine.clock().tick(DEFAULT_DURATION);
         expect($('#item2').hasClass('active')).toBe(true);
       });
 
-      it('goes to the next item after default time', function() {
+      it('goes to the next item after user set duration', function() {
         $('.carousel').ci3({
           duration: 3
         });
         
         jasmine.clock().tick(3000);
         expect($('#item2').hasClass('active')).toBe(true);
+      });
+
+
+      it('does not auto rotate when auto is false', function() {
+        $('.carousel').ci3({
+          auto: false
+        });
+
+        jasmine.clock().tick(DEFAULT_DURATION);
+        expect($('#item1').hasClass('active')).toBe(true);
+        expect($('#item2').hasClass('active')).toBe(false);
+      });
+
+      it('reset auto rotate time on user click', function() {
+        $('.carousel').ci3({
+          auto: true
+        });
+        
+        var half_duration = DEFAULT_DURATION/2;
+        
+        jasmine.clock().tick(half_duration);
+        $('.next').click();
+        jasmine.clock().tick(half_duration);
+        expect($('#item2').hasClass('active')).toBe(true);
+
+        jasmine.clock().tick(DEFAULT_DURATION);
+        expect($('#item3').hasClass('active')).toBe(true);
       });
     });
 
@@ -116,7 +164,6 @@
     beforeEach(function () {
       jasmine.clock().install();
       $(DIV).appendTo('body');
-      $('.carousel').ci3();
     });
 
     afterEach(function () {
